@@ -1,5 +1,28 @@
 [
-    "example",
-    "highlight",
-    "word"
-]
+    {
+      "archived": true,
+      "definition": "你好",
+      "examples": [
+        "Hello, How are you?"
+      ],
+      "image": "https://s0.2mdn.net/simgad/15765932195738540898",
+      "phonetic": "/heˈloʊ/",
+      "phrases": [
+        "say hello"
+      ],
+      "word": "hello"
+    },
+    {
+      "archived": false,
+      "definition": "碳",
+      "examples": [
+        "New legislation aims to reduce carbon emissions."
+      ],
+      "image": "",
+      "phonetic": "/ˈkɑːr.bən/",
+      "phrases": [
+        "carbon of product"
+      ],
+      "word": "carbon"
+    }
+  ]
