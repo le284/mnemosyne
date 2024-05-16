@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mnemosyne</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .word-input {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+        .word-input input,
+        .word-input textarea {
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .word-input button {
+            padding: 10px;
+            font-size: 14px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .word-input button:hover {
+            background-color: #0056b3;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            border-radius: 4px 4px 0 0;
+            margin-right: 2px;
+        }
+        .tab.active {
+            background-color: white;
+            border-bottom: none;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 0 4px 4px 4px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        ul {
+            padding: 0;
+            list-style: none;
+        }
+        li {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .word-text {
+            flex: 1;
+            margin-right: 20px;
+            text-align: left;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .buttons button {
+            padding: 5px 10px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .archive-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .archive-btn:hover {
+            background-color: #218838;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        .edit-btn {
+            background-color: #ffc107;
+            color: white;
+        }
+        .edit-btn:hover {
+            background-color: #e0a800;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .pagination button.active {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mnemosyne</h1>
+    <div class="word-input">
+        <input type="text" id="word" placeholder="Add a word">
+        <input type="text" id="definition" placeholder="Add a definition">
+        <input type="text" id="phonetic" placeholder="Add a phonetic">
+        <textarea id="phrases" placeholder="Add phrases (separated by semicolons)"></textarea>
+        <textarea id="examples" placeholder="Add examples (separated by semicolons)"></textarea>
+        <input type="text" id="image" placeholder="Add an image URL">
+        <button id="addWord">Add</button>
+    </div>
+    <button id="clearData">Clear Data</button>
+    <button id="exportWords">Export Words</button>
+    <input type="file" id="importWords" style="display:none;">
+    <button id="importWordsButton">Import Words</button>
+    <div class="tabs">
+        <div class="tab active" data-tab="wordsTab">Words</div>
+        <div class="tab" data-tab="archivedTab">Archived Words</div>
+    </div>
+    <div id="wordsTab" class="tab-content active">
+        <ul id="wordList"></ul>
+        <div class="pagination" id="wordPagination"></div>
+    </div>
+    <div id="archivedTab" class="tab-content">
+        <ul id="archivedWordList"></ul>
+        <div class="pagination" id="archivedPagination"></div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="wordModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalWord"></h2>
+            <p><strong>Phonetic:</strong> <span id="modalPhonetic"></span></p>
+            <p><strong>Definition:</strong> <span id="modalDefinition"></span></p>
+            <p><strong>Phrases:</strong> <span id="modalPhrases"></span></p>
+            <p><strong>Examples:</strong> <span id="modalExamples"></span></p>
+            <img id="modalImage" src="" alt="Image" style="max-width: 100%;">
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Word</h2>
+            <input type="text" id="editWord" placeholder="Word">
+            <input type="text" id="editDefinition" placeholder="Definition">
+            <input type="text" id="editPhonetic" placeholder="Phonetic">
+            <textarea id="editPhrases" placeholder="Phrases (separated by semicolons)"></textarea>
+            <textarea id="editExamples" placeholder="Examples (separated by semicolons)"></textarea>
+            <input type="text" id="editImage" placeholder="Image URL">
+            <button id="saveEdit">Save</button>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
